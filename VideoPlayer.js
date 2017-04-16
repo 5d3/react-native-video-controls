@@ -785,10 +785,7 @@ export default class VideoPlayer extends Component {
                 ]}>
                     <View style={ styles.controls.topControlGroup }>
                         { this.renderBack() }
-                        <View style={ styles.controls.pullRight }>
-                            { this.renderVolume() }
-                            { this.renderFullscreen() }
-                        </View>
+                        { this.renderTitle() }
                     </View>
                 </Image>
             </Animated.View>
@@ -798,6 +795,7 @@ export default class VideoPlayer extends Component {
     /**
      * Back button control
      */
+
     renderBack() {
         return this.renderControl(
             <Image
@@ -864,8 +862,14 @@ export default class VideoPlayer extends Component {
             ]}>
             <Image
                 source={ require( './assets/img/bottom-vignette.png' ) }
-                style={[ styles.controls.column, styles.controls.vignette,
+                style={[ {flexDirection: 'row', alignItems: 'center'},styles.controls.column, styles.controls.vignette,
             ]}>
+                <View style={[
+                    styles.controls.column,
+                    styles.controls.bottomControlGroup
+                ]}>
+                    { this.renderPlayPause() }
+                </View>
                 <View style={[
                     styles.player.container,
                     styles.controls.seekbar
@@ -876,8 +880,6 @@ export default class VideoPlayer extends Component {
                     styles.controls.column,
                     styles.controls.bottomControlGroup
                 ]}>
-                    { this.renderPlayPause() }
-                    { this.renderTitle() }
                     { this.renderTimer() }
                 </View>
             </Image>
@@ -900,7 +902,7 @@ export default class VideoPlayer extends Component {
                     styles.seek.fill,
                     {
                         width: this.state.seekerFillWidth,
-                        backgroundColor: this.props.seekColor || '#FFF'
+                        backgroundColor: this.props.seekColor || 'red'
                     }
                 ]}>
                     <View
@@ -914,7 +916,7 @@ export default class VideoPlayer extends Component {
                     >
                         <View style={[
                             styles.seek.circle,
-                            { backgroundColor: this.props.seekColor || '#FFF' } ]}
+                            { backgroundColor: this.props.seekColor || 'red' } ]}
                         />
                     </View>
                 </View>
@@ -927,8 +929,9 @@ export default class VideoPlayer extends Component {
      */
     renderPlayPause() {
         let source = this.state.paused === true ? require( './assets/img/play.png' ) : require( './assets/img/pause.png' );
+        let style = this.state.paused === true ? {width: 9, height: 15} : {width: 15, height: 15}
         return this.renderControl(
-            <Image source={ source } />,
+            <Image style={style} source={ source } />,
             this.methods.togglePlayPause,
             styles.controls.playPause
         );
@@ -940,17 +943,19 @@ export default class VideoPlayer extends Component {
     renderTitle() {
         if ( this.opts.title ) {
             return (
-                <View style={[
-                    styles.controls.control,
-                    styles.controls.title,
-                ]}>
-                    <Text style={[
-                        styles.controls.text,
-                        styles.controls.titleText
-                    ]} numberOfLines={ 1 }>
-                        { this.opts.title || '' }
-                    </Text>
-                </View>
+                <TouchableWithoutFeedback onPress={this.methods.onBack}>
+                    <View style={[
+                        styles.controls.control,
+                        styles.controls.title,
+                    ]}>
+                        <Text style={[
+                            styles.controls.text,
+                            styles.controls.titleText
+                        ]} numberOfLines={ 1 }>
+                            { this.opts.title || '' }
+                        </Text>
+                    </View>
+                </TouchableWithoutFeedback>
             );
         }
 
@@ -1058,8 +1063,6 @@ const styles = {
     player: StyleSheet.create({
         container: {
             flex: 1,
-            alignSelf: 'stretch',
-            justifyContent: 'space-between',
         },
         video: {
             position: 'absolute',
@@ -1108,7 +1111,6 @@ const styles = {
             width: null,
         },
         column: {
-            flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'space-between',
             height: null,
@@ -1123,7 +1125,7 @@ const styles = {
         text: {
             backgroundColor: 'transparent',
             color: '#FFF',
-            fontSize: 16,
+            fontSize: 20,
             textAlign: 'center',
         },
         pullRight: {
@@ -1142,11 +1144,11 @@ const styles = {
             justifyContent: 'flex-end',
         },
         seekbar: {
+            flex: 1,
             alignSelf: 'stretch',
             alignItems: 'center',
             justifyContent: 'center',
             zIndex: 100,
-            marginTop: 24,
             marginBottom: 0,
         },
         topControlGroup: {
@@ -1155,7 +1157,8 @@ const styles = {
             justifyContent: 'space-between',
             flexDirection: 'row',
             width: null,
-            margin: 12,
+            marginTop: 12,
+            marginLeft: 3,
             marginBottom: 18,
         },
         bottomControlGroup: {
@@ -1177,22 +1180,18 @@ const styles = {
             width: 80,
         },
         title: {
-            alignItems: 'center',
             flex: 0.6,
             flexDirection: 'column',
             padding: 0,
         },
         titleText: {
-            textAlign: 'center',
-        },
-        timer: {
-            width: 80,
+            textAlign: 'left',
         },
         timerText: {
             backgroundColor: 'transparent',
             color: '#FFF',
-            fontSize: 11,
-            textAlign: 'right',
+            fontSize: 18,
+            textAlign: 'center',
         },
     }),
     seek: StyleSheet.create({
@@ -1200,26 +1199,25 @@ const styles = {
             alignSelf: 'stretch',
             justifyContent: 'center',
             backgroundColor: '#333',
-            height: 4,
+            height: 3,
             marginLeft: 28,
-            marginRight: 28,
         },
         fill: {
             alignSelf: 'flex-start',
-            height: 2,
+            height: 3,
             width: 1,
         },
         handle: {
             position: 'absolute',
-            marginTop: -21,
+            marginTop: -25,
             marginLeft: -24,
             padding: 16,
             paddingBottom: 4,
         },
         circle: {
             borderRadius: 20,
-            height: 12,
-            width: 12,
+            height: 22,
+            width: 22,
         },
     }),
     volume: StyleSheet.create({
